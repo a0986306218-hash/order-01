@@ -261,60 +261,51 @@
         }
 
         async function submitToSpreadsheet() {
-            const tableNum = document.getElementById('table-number').value.trim() || "外帶";
+    const tableNum = document.getElementById('table-number').value.trim() || "外帶";
 
-            let rawItems = [];
-            let total = 0;
+    let rawItems = [];
+    let total = 0;
 
-            menuItems.forEach(item => {
-                if (cart[item.id] > 0) {
-                    rawItems.push(`${item.zh} x${cart[item.id]}`);
-                    total += cart[item.id] * item.price;
-                }
-            });
-
-            if (total === 0) {
-                return alert(currentLang === 'zh' ? "請先選擇餐點！" : "Please select items!");
-            }
-
-            const finalItems = `辣度：${currentSpicy}\n配料：${extraOptions.join(',') || '無'}\n---\n${rawItems.join('\n')}`;
-
-            const btn = document.getElementById('submit-btn');
-            btn.innerText = currentLang === 'zh' ? "⚡ 送出中..." : "⚡ Sending...";
-            btn.disabled = true;
-
-            try {
-                const res = await fetch(scriptURL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        tableNumber: tableNum,
-                        items: finalItems,
-                        total: total
-                    })
-                });
-
-                const result = await res.json();
-
-                if (result.ok && result.orderId) {
-                    currentOrderId = result.orderId;
-                    localStorage.setItem('orderId', currentOrderId);
-
-                    alert((currentLang === 'zh' ? "✅ 訂單成功！單號：" : "✅ Order Sent! ID: ") + currentOrderId);
-                    showOrderState(currentOrderId);
-                    prepareForNext();
-                } else {
-                    alert("送出失敗：" + (result.error || "未知錯誤"));
-                }
-            } catch (e) {
-                alert("Error! " + e);
-            }
-
-            btn.innerText = currentLang === 'zh' ? "確認送出訂單" : "Submit Order";
-            btn.disabled = false;
+    menuItems.forEach(item => {
+        if (cart[item.id] > 0) {
+            rawItems.push(`${item.zh} x${cart[item.id]}`);
+            total += cart[item.id] * item.price;
         }
+    });
+
+    if (total === 0) {
+        return alert(currentLang === 'zh' ? "請先選擇餐點！" : "Please select items!");
+    }
+
+    const finalItems = `辣度：${currentSpicy}\n配料：${extraOptions.join(',') || '無'}\n---\n${rawItems.join('\n')}`;
+
+    const btn = document.getElementById('submit-btn');
+    btn.innerText = currentLang === 'zh' ? "⚡ 送出中..." : "⚡ Sending...";
+    btn.disabled = true;
+
+    try {
+        await fetch(scriptURL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'text/plain;charset=utf-8'
+            },
+            body: JSON.stringify({
+                tableNumber: tableNum,
+                items: finalItems,
+                total: total
+            })
+        });
+
+        alert(currentLang === 'zh' ? "✅ 訂單已送出！請看後台單號" : "✅ Order sent! Please check backend order ID.");
+        prepareForNext();
+    } catch (e) {
+        alert("Error! " + e);
+    }
+
+    btn.innerText = currentLang === 'zh' ? "確認送出訂單" : "Submit Order";
+    btn.disabled = false;
+}
 
         function showOrderState(id) {
             document.getElementById('header-num').innerText = id;
