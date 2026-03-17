@@ -134,10 +134,10 @@
         let currentOrderId = localStorage.getItem('orderId') || null;
 
         window.onload = function () {
-            renderMenu();
-            if (currentOrderId) showOrderState(currentOrderId);
-            updateUI();
-        };
+    updateUI();
+    renderMenu();
+    if (currentOrderId) showOrderState(currentOrderId);
+};
 
         function switchLang(lang) {
             currentLang = lang;
