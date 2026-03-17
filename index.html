@@ -286,6 +286,7 @@
         }
 
         async function submitToSpreadsheet() {
+  try {
             const tableNum = document.getElementById('table-number').value.trim() || "外帶";
 
             let rawItems = [];
@@ -329,8 +330,9 @@
                     alert("送出失敗：" + (result.error || "未知錯誤"));
                 }
             } catch (e) {
-                alert("Error! " + e.message);
-            }
+  console.error(e);
+  alert("送單失敗，請檢查網路後再試一次");
+}
 
             btn.innerText = currentLang === 'zh' ? "確認送出訂單" : "Submit Order";
             btn.disabled = false;
