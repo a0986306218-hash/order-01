@@ -222,29 +222,29 @@
         }
 
         function renderMenu() {
-            const container = document.getElementById('menu-container');
-            container.innerHTML = "";
+  const container = document.getElementById('menu-container');
+  container.innerHTML = "";
 
-            menuItems.forEach(item => {
-                if (cart[item.id] === undefined) cart[item.id] = 0;
+  menuItems.forEach(item => {
+    if (cart[item.id] === undefined) cart[item.id] = 0;
 
-                const displayName = currentLang === 'zh' ? item.zh : item.en;
+    const displayName = currentLang === 'zh' ? item.zh : item.en;
 
-                container.innerHTML += `
-                    <div class="flex items-center justify-between p-2 border-b border-gray-100">
-                        <div>
-                            <b class="text-slate-800">${displayName}</b><br>
-                            <span class="text-orange-600 font-bold">$${item.price}</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <button onclick="updateQty('${item.id}', -1)" class="w-8 h-8 rounded-full border border-blue-800 text-blue-800 font-bold">-</button>
-                            <span id="qty-${item.id}" class="font-bold w-4 text-center">${cart[item.id]}</span>
-                            <button onclick="updateQty('${item.id}', 1)" class="w-8 h-8 rounded-full border border-blue-800 text-blue-800 font-bold">+</button>
-                        </div>
-                    </div>
-                `;
-            });
-        }
+    container.innerHTML += `
+      <div class="flex items-center justify-between p-2 border-b border-gray-100">
+        <div>
+          <div class="text-slate-800">${displayName}</div>
+          <div class="text-orange-600 font-bold">$${item.price}</div>
+        </div>
+        <div class="flex items-center gap-3">
+          <button onclick="updateQty('${item.id}', -1)" class="w-8 h-8 rounded-full border border-blue-800 text-blue-800 font-bold">-</button>
+          <span id="qty-${item.id}" class="w-4 text-center">${cart[item.id]}</span>
+          <button onclick="updateQty('${item.id}', 1)" class="w-8 h-8 rounded-full border border-blue-800 text-blue-800 font-bold">+</button>
+        </div>
+      </div>
+    `;
+  });
+}
 
         function updateQty(id, change) {
             cart[id] = Math.max(0, cart[id] + change);
