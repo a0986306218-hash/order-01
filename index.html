@@ -119,13 +119,23 @@
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxHA2vmGtTgvKUaZEJastl8YhgScbke7nVfIgATv5pUAYjb4KlahpIRc5cyvvPBqzmV/exec';
 
-        const menuItems = [
-            { id: "c", zh: "鹹酥雞", en: "Crispy Chicken", price: 60 },
-            { id: "p", zh: "雞排", en: "Chicken Cutlet", price: 80 },
-            { id: "t", zh: "甜不辣", en: "Tempura", price: 40 },
-            { id: "m", zh: "米血", en: "Blood Cake", price: 35 },
-            { id: "d", zh: "可樂", en: "Cola", price: 30 }
-        ];
+        let menuItems = [];
+
+async function loadMenu() {
+    try {
+        const result = await jsonpRequest(`${scriptURL}?action=menu`);
+
+        if (result.ok) {
+            menuItems = result.menu || [];
+            renderMenu();
+        } else {
+            alert("讀取菜單失敗");
+        }
+    } catch (e) {
+        console.error(e);
+        alert("無法載入菜單，請檢查網路");
+    }
+}
 
         let currentLang = 'zh';
         let cart = {};
@@ -135,7 +145,7 @@
 
         window.onload = function () {
     updateUI();
-    renderMenu();
+    loadMenu();
     if (currentOrderId) showOrderState(currentOrderId);
 };
 
