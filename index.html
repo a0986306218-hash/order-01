@@ -238,7 +238,7 @@ async function loadMenu() {
   menuItems.forEach(item => {
     if (cart[item.id] === undefined) cart[item.id] = 0;
 
-    const displayName = currentLang === 'zh' ? item.品名 : item.英文名;
+    const displayName = currentLang === 'zh' ? item.zh : item.en;
 
     container.innerHTML += `
       <div class="flex items-center justify-between p-2 border-b border-gray-100">
