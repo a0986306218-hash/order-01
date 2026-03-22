@@ -47,20 +47,30 @@ let cart = {};
 let currentLang = "zh";
 
 /* 🔥 JSONP（穩定版） */
-function jsonpRequest(url){
-    return new Promise((resolve,reject)=>{
-        const cb="cb_"+Date.now();
-        const s=document.createElement("script");
+function jsonpRequest(url) {
+    return new Promise((resolve, reject) => {
+        const cb = "cb_" + Date.now();
+        const s = document.createElement("script");
 
-        window[cb]=(data)=>{
+        window[cb] = (data) => {
             resolve(data);
             delete window[cb];
             s.remove();
         };
 
-        s.onerror=()=>reject("error");
+        s.onerror = () => {
+            reject("error");
+            delete window[cb];
+            s.remove();
+        };
 
-        s.src=url+"&callback="+cb;
+        // 🔥 關鍵修正（這一行）
+        const fullUrl = url.includes("?")
+            ? `${url}&callback=${cb}`
+            : `${url}?callback=${cb}`;
+
+        s.src = fullUrl;
+
         document.body.appendChild(s);
     });
 }
