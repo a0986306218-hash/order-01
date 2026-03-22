@@ -1,390 +1,163 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>點易 OrderEase - 鹹酥雞終極版</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
-    <style>
-        :root {
-            --primary-blue: #1a237e;
-            --primary-orange: #ff6d00;
-        }
-        body {
-            font-family: "Noto Sans TC", sans-serif;
-            background: linear-gradient(135deg, #4a3528 0%, #2d1f18 100%);
-            min-height: 100vh;
-            padding-bottom: 50px;
-        }
-        #sticky-order-bar {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background: rgba(45, 31, 24, 0.95);
-            color: #f5e6d3;
-            text-align: center;
-            padding: 12px;
-            font-weight: bold;
-            z-index: 9999;
-            border-bottom: 2px solid #ff6d00;
-            display: none;
-        }
-        .menu-card {
-            background: rgba(245, 230, 211, 0.98);
-            border: 1px solid #c4a574;
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-        .opt-btn {
-            font-size: 12px;
-            padding: 4px 10px;
-            border-radius: 20px;
-            border: 1px solid #c4a574;
-            color: #5d4037;
-        }
-        .opt-btn.active {
-            background: #ff6d00 !important;
-            color: white !important;
-            border-color: #ff6d00 !important;
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>點易 OrderEase</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body { font-family: sans-serif; background:#2d1f18; }
+.menu-card { background:#fff; border-radius:15px; padding:15px; }
+.opt-btn { padding:4px 10px; border:1px solid #ccc; border-radius:20px; }
+.opt-btn.active { background:#ff6d00; color:#fff; }
+</style>
 </head>
-<body class="antialiased">
-    <div id="sticky-order-bar">
-        <span id="lang-order-id">您的單號：</span>
-        <span id="header-num" style="color: #ff6d00;"></span>
-        <button onclick="clearAllData()" id="lang-new-order" class="ml-4 text-xs bg-red-700 text-white px-2 py-1 rounded">
-            新顧客/結帳
-        </button>
-    </div>
 
-    <div class="max-w-md mx-auto px-4 py-6">
-        <header class="bg-white rounded-2xl p-6 mb-6 text-center shadow-lg">
-            <div class="flex items-center justify-center gap-3 mb-4">
-                <div style="background: var(--primary-blue); width:35px; height:35px; border-radius:8px; display:flex; align-items:center; justify-content:center; position:relative;">
-                    <span style="color:#fff; font-size:20px;">✔</span>
-                    <div style="position:absolute; top:-2px; right:-2px; background:var(--primary-orange); width:12px; height:12px; border-radius:50%; border:2px solid #fff;"></div>
-                </div>
+<body>
 
-                <div>
-                    <div class="font-bold text-2xl">
-                        <span style="color:var(--primary-blue);">OrderEase</span><span style="color:var(--primary-orange);">點易</span>
-                    </div>
-                    <div class="text-3xl font-extrabold mt-2 text-orange-600">阿明鹹酥雞</div>
-                </div>
-            </div>
+<div class="max-w-md mx-auto p-4">
 
-            <div class="inline-flex bg-gray-100 rounded-full p-1 text-xs">
-                <button onclick="switchLang('en')" id="btn-en" class="px-4 py-2 rounded-full text-gray-500">English</button>
-                <button onclick="switchLang('zh')" id="btn-zh" class="px-4 py-2 rounded-full bg-blue-700 text-white">中文</button>
-            </div>
-        </header>
+<h2 class="text-white text-xl mb-3">阿明鹹酥雞</h2>
 
-        <main class="menu-card p-4 space-y-4">
-            <div class="bg-white/50 p-3 rounded-xl border border-orange-200">
-                <label id="lang-table-label" class="block text-sm font-bold text-brown-800 mb-1">📍 桌號 (未填預設為外帶)：</label>
-                <input type="text" id="table-number" placeholder="" class="w-full p-2 rounded-lg border border-gray-300 focus:outline-none">
-            </div>
+<div>
+<button onclick="switchLang('zh')">中文</button>
+<button onclick="switchLang('en')">English</button>
+</div>
 
-            <div class="bg-white/50 p-3 rounded-xl border border-blue-200 space-y-2">
-                <div class="flex items-center gap-2 flex-wrap">
-                    <span id="lang-spicy-label" class="text-xs font-bold text-blue-900">辣度：</span>
-                    <button class="opt-btn active" onclick="setSpicy('不辣', this)" id="sp-none">不辣</button>
-                    <button class="opt-btn" onclick="setSpicy('小辣', this)" id="sp-mild">小辣</button>
-                    <button class="opt-btn" onclick="setSpicy('中辣', this)" id="sp-med">中辣</button>
-                    <button class="opt-btn" onclick="setSpicy('大辣', this)" id="sp-hot">大辣</button>
-                </div>
-                <div class="flex items-center gap-2">
-                    <span id="lang-addons-label" class="text-xs font-bold text-blue-900">配料：</span>
-                    <button class="opt-btn" onclick="toggleOption('加蒜頭', this)" id="opt-garlic">＋蒜頭</button>
-                    <button class="opt-btn" onclick="toggleOption('加九層塔', this)" id="opt-basil">＋九層塔</button>
-                </div>
-            </div>
+<div id="menu-container" class="menu-card mt-3"></div>
 
-            <div id="menu-container" class="space-y-3"></div>
+<div class="mt-3 text-white">
+總金額：<span id="total-price">0</span>
+</div>
 
-            <div class="border-t-2 border-gray-200 pt-4 mt-6">
-                <div class="flex justify-between items-center mb-4">
-                    <span id="lang-total-label" class="font-bold text-gray-600">總金額</span>
-                    <span id="total-price" class="text-2xl font-bold text-orange-600">$0</span>
-                </div>
-                <button id="submit-btn" onclick="submitToSpreadsheet()" class="w-full bg-orange-600 text-white font-bold py-4 rounded-xl shadow-lg active:scale-95 transition">
-                    確認送出訂單
-                </button>
-            </div>
-        </main>
-    </div>
+<button onclick="submitToSpreadsheet()" class="bg-orange-600 text-white p-3 w-full mt-3">
+送出訂單
+</button>
 
-    <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxHA2vmGtTgvKUaZEJastl8YhgScbke7nVfIgATv5pUAYjb4KlahpIRc5cyvvPBqzmV/exec';
+</div>
 
-        let menuItems = [];
+<script>
 
-async function loadMenu() {
-    try {
+const scriptURL = "https://script.google.com/macros/s/AKfycbxHA2vmGtTgvKUaZEJastl8YhgScbke7nVfIgATv5pUAYjb4KlahpIRc5cyvvPBqzmV/exec";
+
+let menuItems = [];
+let cart = {};
+let currentLang = "zh";
+
+/* 🔥 JSONP（穩定版） */
+function jsonpRequest(url){
+    return new Promise((resolve,reject)=>{
+        const cb="cb_"+Date.now();
+        const s=document.createElement("script");
+
+        window[cb]=(data)=>{
+            resolve(data);
+            delete window[cb];
+            s.remove();
+        };
+
+        s.onerror=()=>reject("error");
+
+        s.src=url+"&callback="+cb;
+        document.body.appendChild(s);
+    });
+}
+
+/* 🔥 載入菜單 */
+async function loadMenu(){
+    try{
         const result = await jsonpRequest(`${scriptURL}?action=menu`);
 
-        if (result.ok) {
-            menuItems = result.menu || [];
+        if(result.ok){
+            menuItems = result.menu;
             renderMenu();
-        } else {
-            alert("讀取菜單失敗");
         }
-    } catch (e) {
-        console.error(e);
-        alert("無法載入菜單，請檢查網路");
+    }catch(e){
+        alert("菜單載入失敗");
     }
 }
 
-        let currentLang = 'zh';
-        let cart = {};
-        let currentSpicy = "不辣";
-        let extraOptions = [];
-        let currentOrderId = localStorage.getItem('orderId') || null;
+/* 🔥 渲染 */
+function renderMenu(){
+    const el = document.getElementById("menu-container");
+    el.innerHTML="";
 
-        window.onload = function () {
-    updateUI();
-    loadMenu();
-    if (currentOrderId) showOrderState(currentOrderId);
-};
+    menuItems.forEach(item=>{
+        if(cart[item.id]===undefined) cart[item.id]=0;
 
-        function switchLang(lang) {
-            currentLang = lang;
-            document.getElementById('btn-en').className = lang === 'en'
-                ? "px-4 py-2 rounded-full bg-blue-700 text-white"
-                : "px-4 py-2 rounded-full text-gray-500";
+        const name = currentLang==="zh"?item.zh:item.en;
 
-            document.getElementById('btn-zh').className = lang === 'zh'
-                ? "px-4 py-2 rounded-full bg-blue-700 text-white"
-                : "px-4 py-2 rounded-full text-gray-500";
+        el.innerHTML += `
+        <div class="flex justify-between mb-2">
+            <div>${name} $${item.price}</div>
+            <div>
+                <button onclick="updateQty('${item.id}',-1)">-</button>
+                ${cart[item.id]}
+                <button onclick="updateQty('${item.id}',1)">+</button>
+            </div>
+        </div>`;
+    });
 
-            updateUI();
-            renderMenu();
-        }
-
-        function updateUI() {
-            const ui = {
-                zh: {
-                    orderId: "您的單號：",
-                    new: "新顧客/結帳",
-                    table: "📍 桌號 (未填預設為外帶)：",
-                    spicy: "辣度：",
-                    addons: "配料：",
-                    total: "總金額",
-                    submit: "確認送出訂單",
-                    placeholder: "例如：A1",
-                    sp0: "不辣",
-                    sp1: "小辣",
-                    sp2: "中辣",
-                    sp3: "大辣",
-                    opt1: "＋蒜頭",
-                    opt2: "＋九層塔"
-                },
-                en: {
-                    orderId: "Order ID: ",
-                    new: "New Order",
-                    table: "📍 Table No. (Default: Takeout):",
-                    spicy: "Spicy:",
-                    addons: "Add-ons:",
-                    total: "Total",
-                    submit: "Submit Order",
-                    placeholder: "e.g., A1",
-                    sp0: "None",
-                    sp1: "Mild",
-                    sp2: "Med",
-                    sp3: "Hot",
-                    opt1: "+ Garlic",
-                    opt2: "+ Basil"
-                }
-            };
-
-            const t = ui[currentLang];
-            document.getElementById('lang-order-id').innerText = t.orderId;
-            document.getElementById('lang-new-order').innerText = t.new;
-            document.getElementById('lang-table-label').innerText = t.table;
-            document.getElementById('lang-spicy-label').innerText = t.spicy;
-            document.getElementById('lang-addons-label').innerText = t.addons;
-            document.getElementById('lang-total-label').innerText = t.total;
-            document.getElementById('submit-btn').innerText = t.submit;
-            document.getElementById('table-number').placeholder = t.placeholder;
-            document.getElementById('sp-none').innerText = t.sp0;
-            document.getElementById('sp-mild').innerText = t.sp1;
-            document.getElementById('sp-med').innerText = t.sp2;
-            document.getElementById('sp-hot').innerText = t.sp3;
-            document.getElementById('opt-garlic').innerText = t.opt1;
-            document.getElementById('opt-basil').innerText = t.opt2;
-        }
-
-        function setSpicy(val, el) {
-            currentSpicy = val;
-            el.parentNode.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
-            el.classList.add('active');
-        }
-
-        function toggleOption(val, el) {
-            if (extraOptions.includes(val)) {
-                extraOptions = extraOptions.filter(x => x !== val);
-            } else {
-                extraOptions.push(val);
-            }
-            el.classList.toggle('active');
-        }
-
-        function renderMenu() {
-  const container = document.getElementById('menu-container');
-  container.innerHTML = "";
-
-  menuItems.forEach(item => {
-    if (cart[item.id] === undefined) cart[item.id] = 0;
-
-    const displayName = currentLang === 'zh' ? item.zh : item.en;
-
-    container.innerHTML += `
-      <div class="flex items-center justify-between p-2 border-b border-gray-100">
-        <div>
-          <div class="text-slate-800">${displayName}</div>
-          <div class="text-orange-600 font-bold">$${item.price}</div>
-        </div>
-        <div class="flex items-center gap-3">
-          <button onclick="updateQty('${item.id}', -1)" class="w-8 h-8 rounded-full border border-blue-800 text-blue-800 font-bold">-</button>
-          <span id="qty-${item.id}" class="w-4 text-center">${cart[item.id]}</span>
-          <button onclick="updateQty('${item.id}', 1)" class="w-8 h-8 rounded-full border border-blue-800 text-blue-800 font-bold">+</button>
-        </div>
-      </div>
-    `;
-  });
+    updateTotal();
 }
 
-        function updateQty(id, change) {
-            cart[id] = Math.max(0, cart[id] + change);
-
-            const qtyEl = document.getElementById(`qty-${id}`);
-            if (qtyEl) qtyEl.innerText = cart[id];
-
-            let total = 0;
-            menuItems.forEach(item => {
-                total += cart[item.id] * item.price;
-            });
-
-            document.getElementById('total-price').innerText = `$${total}`;
-        }
-
-        function jsonpRequest(url) {
-            return new Promise((resolve, reject) => {
-                const cb = "jsonp_cb_" + Date.now() + "_" + Math.floor(Math.random() * 1000);
-                const script = document.createElement("script");
-
-                function cleanup() {
-                    try { delete window[cb]; } catch (e) {}
-                    if (script.parentNode) script.parentNode.removeChild(script);
-                }
-
-                window[cb] = function(data) {
-                    cleanup();
-                    resolve(data);
-                };
-
-                script.onerror = function() {
-                    cleanup();
-                    reject(new Error("JSONP request failed"));
-                };
-
-                script.src = url + (url.includes("?") ? "&" : "?") + "callback=" + cb;
-                document.body.appendChild(script);
-            });
-        }
-
-        async function submitToSpreadsheet() {
-            const tableNum = document.getElementById('table-number').value.trim() || "外帶";
-
-            let rawItems = [];
-            let total = 0;
-
-            menuItems.forEach(item => {
-                if (cart[item.id] > 0) {
-                    rawItems.push(`${item.zh} x${cart[item.id]}`);
-                    total += cart[item.id] * item.price;
-                }
-            });
-
-            if (total === 0) {
-                return alert(currentLang === 'zh' ? "請先選擇餐點！" : "Please select items!");
-            }
-
-            const finalItems = `辣度：${currentSpicy}\n配料：${extraOptions.join(',') || '無'}\n---\n${rawItems.join('\n')}`;
-
-            const btn = document.getElementById('submit-btn');
-            btn.innerText = currentLang === 'zh' ? "⚡ 送出中..." : "⚡ Sending...";
-            btn.disabled = true;
-
-            try {
-                const params = new URLSearchParams({
-                    action: "submit",
-                    tableNumber: tableNum,
-                    items: finalItems,
-                    total: String(total)
-                });
-
-                const result = await jsonpRequest(`${scriptURL}?${params.toString()}`);
-
-                if (result.ok && result.orderId) {
-                    currentOrderId = result.orderId;
-                    localStorage.setItem('orderId', currentOrderId);
-
-                    alert((currentLang === 'zh' ? "✅ 訂單成功！單號：" : "✅ Order Sent! ID: ") + currentOrderId);
-                    showOrderState(currentOrderId);
-                    prepareForNext();
-                } else {
-                    alert("送出失敗：" + (result.error || "未知錯誤"));
-                }
-            } catch (e) {
-  console.error(e);
-  alert("送單失敗，請檢查網路後再試一次");
+/* 🔥 數量 */
+function updateQty(id,n){
+    cart[id]=Math.max(0,cart[id]+n);
+    renderMenu();
 }
 
-            btn.innerText = currentLang === 'zh' ? "確認送出訂單" : "Submit Order";
-            btn.disabled = false;
+/* 🔥 總價 */
+function updateTotal(){
+    let total=0;
+    menuItems.forEach(i=>{
+        total+=cart[i.id]*i.price;
+    });
+    document.getElementById("total-price").innerText=total;
+}
+
+/* 🔥 語言 */
+function switchLang(lang){
+    currentLang=lang;
+    renderMenu();
+}
+
+/* 🔥 送單 */
+async function submitToSpreadsheet(){
+
+    let items=[];
+    let total=0;
+
+    menuItems.forEach(i=>{
+        if(cart[i.id]>0){
+            items.push(`${i.zh} x${cart[i.id]}`);
+            total+=cart[i.id]*i.price;
         }
+    });
 
-        function showOrderState(id) {
-            document.getElementById('header-num').innerText = id;
-            document.getElementById('sticky-order-bar').style.display = 'block';
-            document.body.style.paddingTop = '60px';
-        }
+    if(total===0) return alert("請選餐");
 
-        function prepareForNext() {
-            menuItems.forEach(item => {
-                cart[item.id] = 0;
-                const qtyEl = document.getElementById(`qty-${item.id}`);
-                if (qtyEl) qtyEl.innerText = "0";
-            });
+    const params = new URLSearchParams({
+        action:"submit",
+        items:items.join("\n"),
+        total:total
+    });
 
-            currentSpicy = "不辣";
-            extraOptions = [];
+    const result = await jsonpRequest(`${scriptURL}?${params}`);
 
-            document.querySelectorAll('.opt-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById('sp-none').classList.add('active');
+    if(result.ok){
+        alert("成功！");
+    }else{
+        alert("失敗");
+    }
+}
 
-            document.getElementById('opt-garlic').classList.remove('active');
-            document.getElementById('opt-basil').classList.remove('active');
+/* 啟動 */
+loadMenu();
 
-            document.getElementById('table-number').value = "";
-            document.getElementById('total-price').innerText = "$0";
-        }
+</script>
 
-        function clearAllData() {
-            if (confirm(currentLang === 'zh' ? "清除單號並重新點餐嗎？" : "Clear order ID and start over?")) {
-                localStorage.removeItem('orderId');
-                currentOrderId = null;
-
-                document.getElementById('header-num').innerText = "";
-                document.getElementById('sticky-order-bar').style.display = 'none';
-                document.body.style.paddingTop = '0';
-
-                prepareForNext();
-            }
-        }
-    </script>
 </body>
-</html>  
+</html>
