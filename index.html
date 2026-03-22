@@ -64,7 +64,6 @@ function jsonpRequest(url) {
             s.remove();
         };
 
-        // 🔥 關鍵修正（這一行）
         const fullUrl = url.includes("?")
             ? `${url}&callback=${cb}`
             : `${url}?callback=${cb}`;
@@ -76,16 +75,16 @@ function jsonpRequest(url) {
 }
 
 /* 🔥 載入菜單 */
-async function loadMenu(){
-    try{
+async function loadMenu() {
+    try {
         const result = await jsonpRequest(`${scriptURL}?action=menu`);
 
-        if(result.ok){
-            menuItems = result.menu;
+        if (result.ok) {
+            menuItems = result.menu || [];
             renderMenu();
         }
-    }catch(e){
-        alert("菜單載入失敗");
+    } catch (e) {
+        alert("載入失敗");
     }
 }
 
